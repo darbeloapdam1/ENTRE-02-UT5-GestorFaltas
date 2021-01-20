@@ -17,10 +17,40 @@ public class Estudiante {
      *  
      */
     public Estudiante(String lineaDatos) {
-         
+        String[] datos = lineaDatos.split(SEPARADOR);
+        this.nombre = nombreCompuesto(datos[0].trim());
+        this.apellidos = datos[1].trim().toUpperCase();
+        this.faltasNoJustificadas = Integer.parseInt(datos[2].trim());
+        this.faltasJustificadas = Integer.parseInt(datos[3].trim());
 
     }
 
+    /**
+     * An example of a method - replace this comment with your own
+     *
+     * @param  nombre   nombre del estudiante
+     * @return     nombre del estudiante con formato correcto
+     */
+    private String nombreCompuesto(String nombre)
+    {
+        if(nombre.contains(" ")){
+            String[] nombreSeparado = nombre.split(" ");
+            String nombreCorrecto = "";
+            for(int i = 0; i < (nombreSeparado.length - 1); i++){
+                nombreCorrecto += nombreSeparado[i].substring(0,1).toUpperCase() + ".";
+            }
+            String primeraLetra = nombreSeparado[nombreSeparado.length - 1].substring(0,1).toUpperCase();
+            String restoCadena = nombreSeparado[nombreSeparado.length - 1].substring(1);
+            nombreCorrecto += primeraLetra + restoCadena;
+            return nombreCorrecto;
+        }else{
+            String primeraLetra2 = nombre.substring(0,1).toUpperCase();
+            String restoCadena2 = nombre.substring(1).toLowerCase();
+            String nombreCorrecto2 = "";
+            nombreCorrecto2 += primeraLetra2 + restoCadena2;
+            return nombreCorrecto2;
+        }
+    }
 
     /**
      * accesor para el nombre completo
@@ -93,18 +123,28 @@ public class Estudiante {
      * (ver enunciado)
      */
     public String toString() {
-        
-        return null;
-
+        String apercibimientos = "";
+        if(this.faltasNoJustificadas >= 30){
+            apercibimientos += "DIEZ VEINTE TREINTA";
+        }else if(this.faltasNoJustificadas >= 20){
+            apercibimientos += "DIEZ VEINTE";
+        }else if(this.faltasNoJustificadas >= 10){
+            apercibimientos += "DIEZ";
+        }else{
+            apercibimientos += "Sin apercibimientos";
+        }
+        String apellidosNombre = apellidos + "," + nombre;
+        String str = String.format("%-24s %-35s %-25s %-35s %-25s %-35s %-25s %-35s","Apellidos y Nombre:",apellidosNombre,"\nFaltas No Justificadas:", faltasNoJustificadas,
+        "\nFaltas Justificadas:", faltasJustificadas, "\nApercibimientos:",apercibimientos);
+        return str;
     }
 
-
-     public static void main(String[] args) {
-        Estudiante e1 = new Estudiante("  ander ibai  ,  Ruiz Sena , 12, 23");
+    public static void main(String[] args) {
+        Estudiante e1 = new Estudiante("  ander ibai , Ruiz Sena , 12, 23");
         System.out.println(e1);
         System.out.println();
         Estudiante e2 = new Estudiante(
-                " pedro josé   andrés  ,  Troya Baztarrica , 42, 6 ");
+                " pedro josé andrés  ,  Troya Baztarrica , 42, 6 ");
         System.out.println(e2);
         System.out.println();
         Estudiante e3 = new Estudiante("  Javier  ,  Suescun  Andreu , 39, 9 ");
@@ -113,7 +153,6 @@ public class Estudiante {
         Estudiante e4 = new Estudiante("julen, Duque Puyal, 5, 55");
         System.out.println(e4);
         System.out.println();
-        
 
         System.out.println("---------------------------------");
         e1.justificar(3);
