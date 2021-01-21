@@ -10,10 +10,11 @@ import java.util.Scanner;
  *
  */
 public class GestorFaltas {
-     
+    private Estudiante[] estudiantes;
+    private int total;
 
     public GestorFaltas(int n) {
-         
+        estudiantes = new Estudiante[n];
     }
 
     /**
@@ -21,7 +22,7 @@ public class GestorFaltas {
      * false en otro caso
      */
     public boolean cursoCompleto() {
-        return false;
+        return total >= estudiantes.length;
     }
 
     /**
@@ -37,10 +38,23 @@ public class GestorFaltas {
      *    
      */
     public void addEstudiante(Estudiante nuevo) {
-        
-
+        if(!cursoCompleto()){
+            if(buscarEstudiante(nuevo.getApellidos()) < 0){
+                for(int i = total; i >= 0; i--){
+                    if(estudiantes[i].getApellidos().toLowerCase().compareTo(nuevo.getApellidos().toLowerCase()) > 0){
+                        estudiantes[i] = estudiantes[i + 1];
+                    }else{
+                        estudiantes[i] = nuevo;
+                    }
+                }
+                total++;
+            }else{
+                System.out.println("El alumno ya está en el curso");
+            }
+        }else{
+            System.out.println("El curso ya está completo");
+        }
     }
-
 
     /**
      * buscar un estudiante por sus apellidos
@@ -51,8 +65,21 @@ public class GestorFaltas {
      *  
      */
     public int buscarEstudiante(String apellidos) {
-         
-        return 0;
+        int izquierda = 0;
+        int derecha = total;
+        while (izquierda <= derecha) {
+            int mitad = (izquierda + derecha) / 2;
+            if (estudiantes[mitad].getApellidos().toLowerCase().compareTo(apellidos.toLowerCase()) == 0) {
+                return mitad;
+            }
+            else if (estudiantes[mitad].getApellidos().toLowerCase().compareTo(apellidos.toLowerCase()) > 0) {
+                derecha = mitad - 1;
+            }
+            else {
+                izquierda = mitad + 1;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -61,9 +88,11 @@ public class GestorFaltas {
      *  
      */
     public String toString() {
-        
-        return null;
-
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < total; i++){
+            sb.append(estudiantes[i].toString() + "\n--------------------\n");
+        }
+        return sb.toString();
     }
 
     /**
@@ -75,8 +104,9 @@ public class GestorFaltas {
      *  justificar también)
      */
     public void justificarFaltas(String apellidos, int faltas) {
-         
-
+        int estudiante = buscarEstudiante(apellidos);
+        estudiantes[estudiante].justificar(faltas);
+        System.out.println("Se han justificado " + faltas + " al alumno " + estudiantes[estudiante].getApellidos() + ", " + estudiantes[estudiante].getNombre());
     }
 
     /**
@@ -85,8 +115,21 @@ public class GestorFaltas {
      * Método de selección directa
      */
     public void ordenar() {
-        
-
+        for(int i = 0; i < total; i++){
+            int posmin = i;
+            for(int j = 0; j < total; j++){
+                if(estudiantes[j].getFaltasNoJustificadas() > estudiantes[posmin].getFaltasNoJustificadas()){
+                    posmin = j;
+                }else if(estudiantes[j].getFaltasNoJustificadas() == estudiantes[posmin].getFaltasNoJustificadas()){
+                    if(estudiantes[j].getFaltasJustificadas() > estudiantes[posmin].getFaltasJustificadas()){
+                        posmin = j;
+                    }
+                }
+            }
+            Estudiante aux = estudiantes[posmin];
+            estudiantes[posmin] = estudiantes[i];
+            estudiantes[i] = aux;
+        }
     }
 
     /**
@@ -94,8 +137,14 @@ public class GestorFaltas {
      * aquellos estudiantes con 30 o más faltas injustificadas
      */
     public void anularMatricula() {
-         
-
+        for(int i = 0; i < total; i++){
+            if(estudiantes[i].getFaltasNoJustificadas() >= 30){
+                for(int j = i; j < total; j++){
+                    estudiantes[j] = estudiantes[j + 1];
+                }
+                total--;
+            }
+        }
     }
 
     /**
