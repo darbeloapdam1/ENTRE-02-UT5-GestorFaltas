@@ -8,7 +8,19 @@ public class TestGestorFaltas {
      * (ver enunciado)
      */
     public static void main(String[] args) {
-        
+        if(args.length != 1){
+            System.out.println("Error en argumentos");
+            System.out.println("Sintaxis: java TestGestorFaltas <max_estudiantes>");
+        }else{
+            GestorFaltas curso = new GestorFaltas(Integer.parseInt(args[0]));
+            curso.leerDeFichero();
+            System.out.println(curso.toString());
+            curso.justificarFaltas("IRISO FLAMARIQUE", 6);
+            curso.ordenar();
+            System.out.println(curso.toString());
+            curso.anularMatricula();
+            System.out.println(curso.toString());
+        }
     }
 
 }

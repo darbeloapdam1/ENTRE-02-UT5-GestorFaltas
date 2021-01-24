@@ -1,6 +1,6 @@
 /**
  * Un objeto de esta clase guarda la información de un estudiante
- *
+ * @author - Diego Arbeloa
  */
 public class Estudiante {
     private final static String SEPARADOR = ",";
@@ -34,10 +34,13 @@ public class Estudiante {
     private String nombreCompuesto(String nombre)
     {
         if(nombre.contains(" ")){
-            String[] nombreSeparado = nombre.split(" ");
+            String[] nombreSeparado = nombre.trim().split(" "); 
             String nombreCorrecto = "";
             for(int i = 0; i < (nombreSeparado.length - 1); i++){
-                nombreCorrecto += nombreSeparado[i].substring(0,1).toUpperCase() + ".";
+                if(nombreSeparado[i].equals("")){
+                }else{
+                    nombreCorrecto += nombreSeparado[i].substring(0,1).toUpperCase() + ".";
+                }
             }
             String primeraLetra = nombreSeparado[nombreSeparado.length - 1].substring(0,1).toUpperCase();
             String restoCadena = nombreSeparado[nombreSeparado.length - 1].substring(1);
@@ -123,19 +126,23 @@ public class Estudiante {
      * (ver enunciado)
      */
     public String toString() {
-        String apercibimientos = "";
-        if(this.faltasNoJustificadas >= 30){
-            apercibimientos += "DIEZ VEINTE TREINTA";
-        }else if(this.faltasNoJustificadas >= 20){
-            apercibimientos += "DIEZ VEINTE";
-        }else if(this.faltasNoJustificadas >= 10){
-            apercibimientos += "DIEZ";
+        String apercibimiento = "";
+        Apercibimientos treinta = Apercibimientos.TREINTA;
+        Apercibimientos veinte = Apercibimientos.VEINTE;
+        Apercibimientos diez = Apercibimientos.DIEZ;
+        Apercibimientos sin = Apercibimientos.SIN_APERCIBIMIENTOS;
+        if(this.faltasNoJustificadas >= treinta.getNFaltas()){
+            apercibimiento += treinta.getApercibimiento();
+        }else if(this.faltasNoJustificadas >= veinte.getNFaltas()){
+            apercibimiento += veinte.getApercibimiento();
+        }else if(this.faltasNoJustificadas >= diez.getNFaltas()){
+            apercibimiento += diez.getApercibimiento();
         }else{
-            apercibimientos += "Sin apercibimientos";
+            apercibimiento += sin.getApercibimiento();
         }
         String apellidosNombre = apellidos + "," + nombre;
         String str = String.format("%-24s %-35s %-25s %-35s %-25s %-35s %-25s %-35s","Apellidos y Nombre:",apellidosNombre,"\nFaltas No Justificadas:", faltasNoJustificadas,
-        "\nFaltas Justificadas:", faltasJustificadas, "\nApercibimientos:",apercibimientos);
+                "\nFaltas Justificadas:", faltasJustificadas, "\nApercibimientos:", apercibimiento);
         return str;
     }
 

@@ -7,7 +7,7 @@ import java.util.Scanner;
  * curso (leyendo la información de un fichero de texto) y 
  * emitir listados con las faltas de los estudiantes, justificar faltas, 
  * anular matrícula dependiendo del nº de faltas, .....
- *
+ * @author - Diego Arbeloa
  */
 public class GestorFaltas {
     private Estudiante[] estudiantes;
@@ -40,20 +40,38 @@ public class GestorFaltas {
     public void addEstudiante(Estudiante nuevo) {
         if(!cursoCompleto()){
             if(buscarEstudiante(nuevo.getApellidos()) < 0){
-                for(int i = total; i >= 0; i--){
-                    if(estudiantes[i].getApellidos().toLowerCase().compareTo(nuevo.getApellidos().toLowerCase()) > 0){
-                        estudiantes[i] = estudiantes[i + 1];
-                    }else{
-                        estudiantes[i] = nuevo;
+                if(total == 0){
+                    estudiantes[total] = nuevo;
+                }else{
+                    int pos = getPosicionDe(nuevo.getApellidos());
+                    for(int i = total; i > pos; i--){
+                        estudiantes[i] = estudiantes[i - 1];
                     }
+                    estudiantes[pos] = nuevo;
                 }
                 total++;
             }else{
-                System.out.println("El alumno ya está en el curso");
+                System.out.println("Ya está registrado el estudiante " + nuevo.getApellidos() + " " + nuevo.getNombre()+ " en el curso");
             }
         }else{
             System.out.println("El curso ya está completo");
         }
+    }
+
+    /**
+     * 
+     *
+     * @param  apellidos los apellidos del estudiante a colocar
+     * @return  i/total devuelve la posicion del estudiante a colocar
+     */
+    private int getPosicionDe(String apellidos)
+    {
+        for(int i = 0; i < total; i++){
+            if(estudiantes[i].getApellidos().compareTo(apellidos) > 0){
+                return i;
+            }
+        }
+        return total;
     }
 
     /**
@@ -65,18 +83,16 @@ public class GestorFaltas {
      *  
      */
     public int buscarEstudiante(String apellidos) {
-        int izquierda = 0;
-        int derecha = total;
-        while (izquierda <= derecha) {
-            int mitad = (izquierda + derecha) / 2;
-            if (estudiantes[mitad].getApellidos().toLowerCase().compareTo(apellidos.toLowerCase()) == 0) {
+        int izq = 0;
+        int dch = total - 1;
+        while(izq < dch){
+            int mitad = (izq + dch) / 2;
+            if(estudiantes[mitad].getApellidos().compareToIgnoreCase(apellidos) < 0){
+                izq = mitad + 1;
+            }else if(estudiantes[mitad].getApellidos().compareToIgnoreCase(apellidos) > 0){
+                dch = mitad - 1;
+            }else if(estudiantes[mitad].getApellidos().compareToIgnoreCase(apellidos) == 0){
                 return mitad;
-            }
-            else if (estudiantes[mitad].getApellidos().toLowerCase().compareTo(apellidos.toLowerCase()) > 0) {
-                derecha = mitad - 1;
-            }
-            else {
-                izquierda = mitad + 1;
             }
         }
         return -1;
@@ -88,7 +104,7 @@ public class GestorFaltas {
      *  
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("Relación de estudiantes (" + total + ")\n\n");
         for(int i = 0; i < total; i++){
             sb.append(estudiantes[i].toString() + "\n--------------------\n");
         }
@@ -104,7 +120,7 @@ public class GestorFaltas {
      *  justificar también)
      */
     public void justificarFaltas(String apellidos, int faltas) {
-        int estudiante = buscarEstudiante(apellidos);
+        int estudiante = getPosicionDe(apellidos) - 1;
         estudiantes[estudiante].justificar(faltas);
         System.out.println("Se han justificado " + faltas + " al alumno " + estudiantes[estudiante].getApellidos() + ", " + estudiantes[estudiante].getNombre());
     }
@@ -117,7 +133,7 @@ public class GestorFaltas {
     public void ordenar() {
         for(int i = 0; i < total; i++){
             int posmin = i;
-            for(int j = 0; j < total; j++){
+            for(int j = i + 1; j < total; j++){
                 if(estudiantes[j].getFaltasNoJustificadas() > estudiantes[posmin].getFaltasNoJustificadas()){
                     posmin = j;
                 }else if(estudiantes[j].getFaltasNoJustificadas() == estudiantes[posmin].getFaltasNoJustificadas()){
@@ -130,6 +146,7 @@ public class GestorFaltas {
             estudiantes[posmin] = estudiantes[i];
             estudiantes[i] = aux;
         }
+        System.out.println("Ordenado de > a < nº de faltas injustificadas");
     }
 
     /**
@@ -139,7 +156,7 @@ public class GestorFaltas {
     public void anularMatricula() {
         for(int i = 0; i < total; i++){
             if(estudiantes[i].getFaltasNoJustificadas() >= 30){
-                for(int j = i; j < total; j++){
+                for(int j = i; j < total - 1; j++){
                     estudiantes[j] = estudiantes[j + 1];
                 }
                 total--;
