@@ -160,6 +160,7 @@ public class GestorFaltas {
                     estudiantes[j] = estudiantes[j + 1];
                 }
                 total--;
+                i--;
             }
         }
     }

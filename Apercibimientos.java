@@ -2,7 +2,7 @@
 /**
  * Enumeration class Apercibimientos - write a description of the enum class here
  * 
- * @author Diego Arbeloa
+ * @author - Diego Arbeloa
  */
 public enum Apercibimientos
 {
